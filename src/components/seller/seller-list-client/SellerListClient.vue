@@ -1,27 +1,25 @@
 <template>
   <v-container grid-list-md>
-    <v-select
-      :items="fields"
-      v-model="selectedField"
-      label="label"
-    ></v-select>
-    {{this.selectedField}}
-    <v-text-field
-      label="Pesquise por nome"
-      prepend-icon="fa-search"
-    ></v-text-field>
+    <v-row align="center">
+      <v-text-field :label="'Pesquise...'" prepend-inner-icon="fa-search" v-model="search"></v-text-field>
+      <v-btn color="primary" class="d-none d-md-flex ml-5">Adicione um novo cliente</v-btn>
+      <v-btn fixed bottom right class="mx-2 d-md-none" fab dark color="indigo">
+        <v-icon dark>mdi-plus</v-icon>
+      </v-btn>
+    </v-row>
+    <v-spacer></v-spacer>
+    <v-row>
+      <v-data-table></v-data-table>
+    </v-row>
   </v-container>
 </template>
 
 <script>
-import { ClientField } from './ClientFieldSearch'
-
 export default {
   data() {
     return {
-      fields: ClientField,
-      selectedField: '',
-    }
+      search: ""
+    };
   }
 };
 </script>
