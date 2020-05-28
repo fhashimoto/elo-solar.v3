@@ -20,9 +20,11 @@
 import Vue from "vue";
 
 export default Vue.extend({
-  data: () => ({
-    isMobile: false
-  }),
+  data() {
+    return{
+      isMobile: false,
+    }
+  },
 
   beforeDestroy() {
     if (typeof window !== undefined) {
