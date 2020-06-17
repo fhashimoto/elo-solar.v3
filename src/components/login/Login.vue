@@ -66,8 +66,8 @@ export default Vue.extend({
             response
               .json()
               .then(data => {
-                this.$store.state.token = "Bearer " + data.token;
-                this.$store.state.userLogged = true;
+                this.$store.commit("setToken", data.token);
+                this.$store.commit("setLogged", true);
               })
               .then(() => this.getRole());
           } else {
@@ -100,18 +100,10 @@ export default Vue.extend({
             response.json().then(data => {
               this.loading = false;
               this.loginError = false;
-              this.$store.state.userName = data.name;
-              this.$store.state.userRole = data.roles[0].toLowerCase();
-              switch (data.roles[0]) {
-                case "SELLER":
-                  this.$router.push("/seller");
-                  break;
-                case "ENGINEER":
-                  this.$router.push("/engineer");
-                  break;
-                default:
-                  break;
-              }
+              this.$store.commit("setName", data.name);
+              this.$store.commit("setRole", data.roles[0].toUpperCase());
+              this.$store.commit('timeLogin')
+              this.redirectType();
             });
           } else {
             console.log("Error -> ", response);
@@ -120,6 +112,28 @@ export default Vue.extend({
         .catch(err => {
           console.log("Error users -> ", err);
         });
+    },
+    redirectType() {
+      switch (this.$store.state.role) {
+        case "SELLER":
+          if (this.$route.path !== "/seller") {
+            this.$router.push("/seller");
+          }
+          break;
+        case "ENGINEER":
+          if (this.$route.path !== "/engineer") {
+            this.$router.push("/engineer");
+          }
+          break;
+        default:
+          break;
+      }
+    }
+  },
+
+  mounted() {
+    if (this.$store.state.logged) {
+      this.redirectType();
     }
   }
 });
