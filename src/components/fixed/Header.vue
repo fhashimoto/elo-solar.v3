@@ -1,33 +1,32 @@
 <template>
   <div class="header-wrapper">
-    <v-app-bar dense dark :height="isMobile ? 50: 75">
-      <v-menu offset-y v-if="$store.state.logged">
-        <template v-slot:activator="{ on, attrs }">
-          <v-app-bar-nav-icon v-bind="attrs" v-on="on"></v-app-bar-nav-icon>
-          <span>{{$store.state.name}}</span>
-        </template>
-        <v-list>
-          <v-list-item @click="redirectHome()">
-            <i class="fa fa-home" aria-hidden="true"></i>
-            <v-list-item-title>Home</v-list-item-title>
-          </v-list-item>
-          <v-list-item @click="logout()">
-            <i class="fas fa-sign-out-alt"></i>
-            <v-list-item-title>Logout</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-      <span></span>
+    <v-navigation-drawer
+      temporary
+      v-model="drawer"
+      fixed
+      left
+      dark
+      style="{z-index: 200}"
+      v-show="drawer"
+    >
+      <v-btn large text to="/projetos">
+        <i class="fa fa-home mr-1" aria-hidden="true"></i>Home
+      </v-btn>
+      <v-btn large text to="/quem_somos">
+        <i class="fas fa-sign-out-alt mr-1"></i>LogOut
+      </v-btn>
+    </v-navigation-drawer>
 
-      <template v-slot:img="{ props }">
-        <v-img
-          v-bind="props"
-          src="../../assets/elo-solar-logo.png"
-          :max-height="isMobile ? 40 : 65"
-          contain
-          position="center center"
-        ></v-img>
-      </template>
+    <v-app-bar app dark>
+      <v-app-bar-nav-icon absolute left @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+      <img class="logo" src="../../assets/elo-solar-logo.png" alt="logo elo solar" @click.stop="redirectHome()"/>
+      <!-- <v-img
+        src="../../assets/elo-solar-logo.png"
+        :max-height="isMobile ? 40 : 65"
+        contain
+        position="center center"
+        style="cursor: pointer"
+      ></v-img>-->
     </v-app-bar>
   </div>
 </template>
@@ -38,7 +37,8 @@ import Vue from "vue";
 export default Vue.extend({
   data() {
     return {
-      isMobile: false
+      isMobile: false,
+      drawer: false
     };
   },
 
@@ -83,8 +83,19 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .v-list-item__title {
   padding-left: 5px;
+}
+.v-navigation-drawer__content {
+  display: flex;
+  flex-direction: column;
+}
+.logo {
+  height: 100%;
+  cursor: pointer;
+}
+.v-toolbar__content {
+  justify-content: center !important;
 }
 </style>

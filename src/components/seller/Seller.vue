@@ -30,7 +30,7 @@ import Vue from "vue";
 export default Vue.extend({
   methods: {
     goToList() {
-      this.$router.push({name: 'ListClient'})
+      this.$router.push({ name: "ListClient" });
     }
   }
 });

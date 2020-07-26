@@ -48,7 +48,10 @@ export default Vue.extend({
 
   methods: {
     tryLogin() {
-      const raw = JSON.stringify({ login: this.user, password: this.password }),
+      const raw = JSON.stringify({
+          username: this.user,
+          password: this.password
+        }),
         myHeaders = new Headers(),
         requestOptions = {
           method: "POST",
@@ -102,7 +105,7 @@ export default Vue.extend({
               this.loginError = false;
               this.$store.commit("setName", data.name);
               this.$store.commit("setRole", data.roles[0].toUpperCase());
-              this.$store.commit('timeLogin')
+              this.$store.commit("timeLogin");
               this.redirectType();
             });
           } else {

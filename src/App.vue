@@ -1,7 +1,9 @@
 <template>
   <v-app>
     <Header></Header>
-    <router-view></router-view>
+    <v-content>
+      <router-view></router-view>
+    </v-content>
   </v-app>
 </template>
 
@@ -19,12 +21,12 @@ export default Vue.extend({
   }),
 
   beforeUpdate() {
-    this.backToLogin();
-    this.userTimeout();
+    // this.backToLogin();
+    // this.userTimeout();
   },
   mounted() {
-    this.backToLogin();
-    this.userTimeout();
+    // this.backToLogin();
+    // this.userTimeout();
   },
   methods: {
     backToLogin() {
