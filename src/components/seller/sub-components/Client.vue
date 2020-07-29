@@ -5,13 +5,9 @@
         <v-col cols="12" md="4">
           <v-text-field v-model="name" :rules="nameRules" label="Nome" required></v-text-field>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" md="4">
           <v-text-field v-model="email" :rules="emailRules" label="E-mail"></v-text-field>
         </v-col>
-      </v-row>
-      <v-row>
         <v-col cols="12" md="4">
           <v-text-field
             v-model="phone"
@@ -20,7 +16,6 @@
             masked="true"
           ></v-text-field>
         </v-col>
-        {{phone.replace(`(`,``).replace(` `,``).split(`)`)}}
       </v-row>
     </v-container>
   </v-form>
