@@ -21,15 +21,42 @@
   </v-form>
 </template>
 
-<script>
-export default {
+<script lang="ts">
+import Vue from "vue";
+
+export default Vue.extend({
   data: () => ({
     valid: false,
     name: "",
-    nameRules: [v => !!v || "Nome é obrigatório"],
+    nameRules: [(v: string) => !!v || "Nome é obrigatório"],
     email: "",
-    emailRules: [v => /.+@.+/.test(v) || "E-mail deve ser válido"],
-    phone: ""
+    emailRules: [(v: string) => /.+@.+/.test(v) || "E-mail deve ser válido"],
+    phone: "",
+    id: "",
+    tags: [],
   }),
-};
+  props: ["clientData"],
+  mounted() {
+    console.log(this.$props.clientData);
+    this.writeData();
+  },
+  watch: {
+    clientData() {
+      this.writeData();
+    },
+  },
+  methods: {
+    writeData() {
+      if (this.$props.clientData) {
+        this.name = this.$props.clientData.name;
+        this.id = this.$props.clientData.id;
+        this.phone =
+          this.$props.clientData.phone.areaCode +
+          this.$props.clientData.phone.phoneNumber;
+        this.tags = this.$props.clientData.tags;
+        this.email = this.$props.clientData.email;
+      }
+    },
+  },
+});
 </script>
