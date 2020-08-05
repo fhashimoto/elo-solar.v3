@@ -1,34 +1,25 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
+import { User } from '../interfaces/user-interface'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    name: '',
-    role: '',
-    token: '',
+    user: {} as User,
     logged: false,
     timeLogged: new Date()
   },
   mutations: {
-    setName(state, name) {
-      state.name = name
-    },
-    setRole(state, role) {
-      state.role = role
-    },
-    setToken(state, token) {
-      state.token = 'Bearer ' + token
+    setUser(state, data) {
+      state.user = data
     },
     setLogged(state, logged) {
       state.logged = logged
     },
     logout(state) {
-      state.name = '';
-      state.role = '';
-      state.token = '';
+      state.user = {}
       state.logged = false;
     },
     timeLogin(state) {

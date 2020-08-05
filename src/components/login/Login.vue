@@ -42,103 +42,60 @@ export default Vue.extend({
       loading: false,
       loginError: false,
       valid: false,
-      showPassword: false
+      showPassword: false,
     };
   },
 
   methods: {
     tryLogin() {
       const raw = JSON.stringify({
-          username: this.user,
-          password: this.password
-        }),
-        myHeaders = new Headers(),
-        requestOptions = {
-          method: "POST",
-          headers: myHeaders,
-          body: raw
-        };
-
-      myHeaders.append("Content-Type", "application/json");
-      const proxyUrl = "https://cors-anywhere.herokuapp.com/",
-        targetUrl = "https://elosolar.herokuapp.com/v1/login";
-
-      fetch(proxyUrl + targetUrl, requestOptions)
-        .then(response => {
-          if (response.ok) {
-            response
-              .json()
-              .then(data => {
-                this.$store.commit("setToken", data.token);
-                this.$store.commit("setLogged", true);
-              })
-              .then(() => this.getRole());
-          } else {
-            console.log("Error ", response);
-            this.loading = false;
-            this.loginError = true;
-          }
-        }) //Salvando o token
-        .catch(error => {
-          console.log("error", error);
-          this.loading = false;
-          this.loginError = true;
-        });
-
+        username: this.user,
+        password: this.password,
+      });
       this.loading = true;
-    },
-    getRole() {
-      const proxyUrl = "https://cors-anywhere.herokuapp.com/",
-        targetUrl = "https://elosolar.herokuapp.com/v1/users/" + this.user,
-        myHeaders = new Headers();
-      myHeaders.append("Authorization", this.$store.state.token);
-      const requestOptions = {
-        method: "GET",
-        headers: myHeaders
-      };
-
-      fetch(proxyUrl + targetUrl, requestOptions)
-        .then(response => {
-          if (response.ok) {
-            response.json().then(data => {
-              this.loading = false;
-              this.loginError = false;
-              this.$store.commit("setName", data.name);
-              this.$store.commit("setRole", data.roles[0].toUpperCase());
-              this.$store.commit("timeLogin");
-              this.redirectType();
-            });
-          } else {
-            console.log("Error -> ", response);
-          }
+      this.$http
+        .post("/login", raw)
+        .then((response) => {
+          this.$store.commit("setUser", response.data);
+          this.$store.commit("setLogged", true);
+          this.redirectType();
+          console.log(this.$store.state.user);
         })
-        .catch(err => {
-          console.log("Error users -> ", err);
+        .catch((error) => {
+          console.log("error", error);
+          this.loginError = true;
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     redirectType() {
-      switch (this.$store.state.role) {
-        case "SELLER":
-          if (this.$route.path !== "/seller") {
-            this.$router.push("/seller");
-          }
-          break;
-        case "ENGINEER":
-          if (this.$route.path !== "/engineer") {
-            this.$router.push("/engineer");
-          }
-          break;
-        default:
-          break;
+      const user = this.$store.state.user;
+      console.log("redirecionando - ", user);
+      if (user.roles && user.roles.length) {
+        switch (this.$store.state.user.roles[0]) {
+          case "SELLER":
+            if (this.$route.path !== "/seller") {
+              this.$router.push("/seller");
+            }
+            break;
+          case "ENGINEER":
+            if (this.$route.path !== "/engineer") {
+              this.$router.push("/engineer");
+            }
+            break;
+          default:
+            break;
+        }
       }
-    }
+    },
   },
 
   mounted() {
     if (this.$store.state.logged) {
       this.redirectType();
     }
-  }
+  },
 });
 </script>
 

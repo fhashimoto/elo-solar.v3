@@ -71,34 +71,21 @@ export default Vue.extend({
       },
     ],
   }),
-  props: ["clientId"],
+  props: ["clientId", "unitData", "dialog"],
   methods: {
     populateList() {
-      const myHeaders = new Headers();
-      myHeaders.append(
-        "Authorization",
-        "Bearer jQkQpOoKaXhpkHjFF8XmD5wgov61GEl9njiydhw7NoAPP5MfVQVmF0rbjCyPR35M"
-      );
-
-      const requestOptions: RequestInit = {
-        method: "GET",
-        headers: myHeaders,
-        redirect: "follow",
-      };
       if (this.clientId) {
-        this.loading = true;
-        fetch(
-          `https://cors-anywhere.herokuapp.com/https://elosolar.herokuapp.com/v1/consumer-units?filter=clientId==${this.clientId}`,
-          requestOptions
-        )
-          .then((response) => response.json())
-          .then((result) => (this.listUnits = result.data))
+        this.$http
+          .get(`/consumer-units?filter=clientId==${this.clientId}`)
+          .then((result) => (this.listUnits = result.data.data))
           .catch((error) => console.log("error", error))
           .finally(() => (this.loading = false));
       }
     },
     editItem(item: ConsumerUnit) {
-      console.log(item);
+      this.$emit("update:unitData", item);
+      this.$emit("update:dialog", true);
+      console.log("emit - ", item, this.unitData);
     },
     deleteItem(item: ConsumerUnit) {
       console.log(item);

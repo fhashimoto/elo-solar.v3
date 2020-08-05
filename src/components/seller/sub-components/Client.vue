@@ -47,7 +47,8 @@ export default Vue.extend({
   },
   methods: {
     writeData() {
-      if (this.$props.clientData) {
+      console.log(this.$props.clientData)
+      if (this.$props.clientData && this.$props.clientData.id) {
         this.name = this.$props.clientData.name;
         this.id = this.$props.clientData.id;
         this.phone =

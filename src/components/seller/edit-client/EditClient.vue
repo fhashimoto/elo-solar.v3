@@ -1,6 +1,8 @@
 <template>
   <v-container>
-    <Client :clientData.sync="clientData" v-if="!loading"></Client>
+    <template v-if="!loading">
+      <Client :clientData.sync="clientData"></Client>
+    </template>
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw" v-else></i>
     <div class="list-top">
       <h2>Lista de Unidades Consumidoras</h2>
@@ -10,10 +12,14 @@
         </v-btn>
       </div>
     </div>
-    <SellerListUnit :clientId.sync="clientData && clientData.id"></SellerListUnit>
+    <SellerListUnit
+      :clientId.sync="clientData && clientData.id"
+      :unitData.sync="unitData"
+      :dialog.sync="dialog"
+    ></SellerListUnit>
     <v-dialog v-model="dialog" max-width="75vw">
       <v-card>
-        <ConsumerUnits></ConsumerUnits>
+        <ConsumerUnits :unitData.sync="unitData"></ConsumerUnits>
       </v-card>
     </v-dialog>
   </v-container>
@@ -32,32 +38,21 @@ export default Vue.extend({
   },
   data: () => ({
     dialog: false,
-    clientData: null,
+    clientData: {},
     loading: false,
+    unitData: null,
   }),
   beforeMount() {
-    const myHeaders = new Headers();
-    myHeaders.append(
-      "Authorization",
-      "Bearer jQkQpOoKaXhpkHjFF8XmD5wgov61GEl9njiydhw7NoAPP5MfVQVmF0rbjCyPR35M"
-    );
-
-    const requestOptions: RequestInit = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-    this.loading = true;
-    fetch(
-      "https://cors-anywhere.herokuapp.com/https://elosolar.herokuapp.com/v1/clients/" +
-        this.$route.params.id,
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => (this.clientData = result))
+    this.$http
+      .get(`/clients/${this.$route.params.id}`)
+      .then((result) => (this.clientData = result.data))
       .catch((error) => console.log("error", error))
       .finally(() => (this.loading = false));
-    console.log("fetch client - ", this.$route.params.id, this.clientData);
+  },
+  watch: {
+    unitData(val) {
+      console.log(val);
+    },
   },
 });
 </script>

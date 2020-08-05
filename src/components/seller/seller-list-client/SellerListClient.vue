@@ -47,9 +47,6 @@ export default Vue.extend({
       loadingData: true,
     };
   },
-  mounted() {
-    console.log(this.listClient);
-  },
   methods: {
     editItem(item: Client) {
       if (item.id) {
@@ -61,24 +58,9 @@ export default Vue.extend({
     },
   },
   beforeMount() {
-    const myHeaders = new Headers();
-    myHeaders.append(
-      "Authorization",
-      "Bearer jQkQpOoKaXhpkHjFF8XmD5wgov61GEl9njiydhw7NoAPP5MfVQVmF0rbjCyPR35M"
-    );
-
-    const requestOptions: RequestInit = {
-      method: "GET",
-      headers: myHeaders,
-      redirect: "follow",
-    };
-
-    fetch(
-      "https://cors-anywhere.herokuapp.com/https://elosolar.herokuapp.com/v1/clients",
-      requestOptions
-    )
-      .then((response) => response.json())
-      .then((result) => (this.listClient = result.data))
+    this.$http
+      .get("/clients")
+      .then((result) => (this.listClient = result.data.data))
       .catch((error) => console.log("error", error))
       .finally(() => (this.loadingData = false));
   },
