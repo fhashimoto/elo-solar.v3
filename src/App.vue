@@ -21,12 +21,10 @@ export default Vue.extend({
   }),
 
   beforeUpdate() {
-    // this.backToLogin();
-    // this.userTimeout();
+    this.userTimeout();
   },
   mounted() {
-    // this.backToLogin();
-    // this.userTimeout();
+    this.userTimeout();
   },
   methods: {
     backToLogin() {
@@ -36,11 +34,9 @@ export default Vue.extend({
     },
     userTimeout() {
       const timeNow = new Date(),
-        timeDifference = new Date(
-          timeNow.getTime() - new Date(this.$store.state.timeLogged).getTime()
-        ).getMinutes();
-      console.log(timeDifference);
-      if (timeDifference >= 60) {
+        timeDifference = (timeNow.getTime() - new Date(this.$store.state.timeLogged).getTime())/1000
+      console.log('dif - ',timeDifference/60);
+      if ((timeDifference/60) >= 60) {
         this.$store.commit("logout");
         this.backToLogin();
       }

@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <template v-if="!loading">
-      <Client :clientData.sync="clientData"></Client>
+      <Client :clientData.sync="clientDataComputed"></Client>
     </template>
     <i class="fa fa-spinner fa-pulse fa-3x fa-fw" v-else></i>
     <div class="list-top">
@@ -13,7 +13,7 @@
       </div>
     </div>
     <SellerListUnit
-      :clientId.sync="clientData && clientData.id"
+      :clientId.sync="clientDataComputed"
       :unitData.sync="unitData"
       :dialog.sync="dialog"
     ></SellerListUnit>
@@ -54,6 +54,11 @@ export default Vue.extend({
       console.log(val);
     },
   },
+  computed: {
+    clientDataComputed() {
+      return this.clientData
+    }
+  }
 });
 </script>
 

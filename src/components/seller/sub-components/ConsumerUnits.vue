@@ -4,28 +4,36 @@
       <h2>Endereço</h2>
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field v-model="zipCode" label="CEP" v-mask="'#####-###'" masked="false"></v-text-field>
+          <v-text-field
+            v-model="unit.address.zipCode"
+            label="CEP"
+            v-mask="'#####-###'"
+            masked="false"
+          ></v-text-field>
         </v-col>
         <v-col cols="9" md="4">
-          <v-text-field v-model="city" label="Cidade"></v-text-field>
+          <v-text-field v-model="unit.address.city" label="Cidade"></v-text-field>
         </v-col>
         <v-col cols="3" md="4">
-          <v-text-field v-model="state" label="Estado"></v-text-field>
+          <v-text-field v-model="unit.address.state" label="Estado"></v-text-field>
         </v-col>
         <v-col cols="12" md="12">
-          <v-text-field v-model="streetAddress" label="Rua/Avenida"></v-text-field>
+          <v-text-field v-model="unit.address.streetAddress" label="Rua/Avenida"></v-text-field>
         </v-col>
       </v-row>
       <h2>Contas de Energia</h2>
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field label="Unidade Consumidora"></v-text-field>
+          <v-text-field label="Tipo de Conexão" v-model="unit.connectionType"></v-text-field>
         </v-col>
         <v-col cols="12" md="4">
-          <v-text-field label="Código Unitário"></v-text-field>
+          <v-text-field label="Utilidade Elétrica" v-model="unit.electricUtility"></v-text-field>
         </v-col>
         <v-col cols="12" md="4">
-          <v-text-field label="Tipo de Conexão"></v-text-field>
+          <v-text-field label="Modalidade da Tarifa" v-model="unit.tariffModality"></v-text-field>
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-text-field label="Código Unitário" v-model="unit.unitNumber"></v-text-field>
         </v-col>
       </v-row>
       <h3>Última Fatura</h3>
@@ -72,14 +80,23 @@
 
 <script>
 import { VMoney } from "v-money";
+import { ConnectionType } from "../../../enums/connection-type-enum";
 
 export default {
   data: () => ({
+    unit: {
+      address: {
+        city: "",
+        state: "",
+        streetAddress: "",
+        zipCode: "",
+      },
+      connectionType: "",
+      electricUtility: "",
+      tariffModality: "",
+      unitNumber: "",
+    },
     valid: false,
-    zipCode: "",
-    city: "",
-    state: "",
-    streetAddress: "",
     monthArray: [],
     year: new Date().getFullYear(),
     allMonth: [],
@@ -95,6 +112,14 @@ export default {
     energyPrice: null,
     totalDue: null,
   }),
+  computed: {
+    zipCode() {
+      return this.unit.address.zipCode;
+    },
+    connectionType() {
+      return this.unit.connectionType;
+    },
+  },
   watch: {
     zipCode(val) {
       if (val.length == 9) {
@@ -103,9 +128,9 @@ export default {
             .then((resp) => resp.json())
             .then((data) => {
               if (!data.erro) {
-                this.city = data.localidade;
-                this.state = data.uf;
-                this.streetAddress = data.logradouro + `, `;
+                this.unit.address.city = data.localidade;
+                this.unit.address.state = data.uf;
+                this.unit.address.streetAddress = data.logradouro + `, `;
               } else {
                 console.log(`deu erro`);
               }
@@ -121,6 +146,13 @@ export default {
     selectMonth(val) {
       this.monthArray = this.setMonthArray(val, this.year);
     },
+    connectionType(val) {
+      console.log('loop? - ',this.unit, ConnectionType)
+      this.unit.connectionType = ConnectionType[this.unit.connectionType];
+    },
+    unitData(val) {
+      console.log('changeUnitData')
+    }
   },
   mounted() {
     const actualMonth = new Date().getMonth();

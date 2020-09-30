@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import createPersistedState from 'vuex-persistedstate'
 import { User } from '../interfaces/user-interface'
+import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -14,16 +15,18 @@ export default new Vuex.Store({
   mutations: {
     setUser(state, data) {
       state.user = data
+      console.log(data)
+      axios.defaults.headers.get['Authorization'] = `Bearer ${data.token}`
     },
     setLogged(state, logged) {
-      state.logged = logged
+      state.logged = logged            
     },
     logout(state) {
       state.user = {}
       state.logged = false;
     },
-    timeLogin(state) {
-      state.timeLogged = new Date()
+    timeLog(state, date) {
+      state.timeLogged = date
     }
   },
   actions: {

@@ -12,7 +12,7 @@
       <v-btn large text to="/projetos">
         <i class="fa fa-home mr-1" aria-hidden="true"></i>Home
       </v-btn>
-      <v-btn large text to="/quem_somos">
+      <v-btn large text @click="logout">
         <i class="fas fa-sign-out-alt mr-1"></i>LogOut
       </v-btn>
     </v-navigation-drawer>
@@ -75,6 +75,7 @@ export default Vue.extend({
     },
     logout() {
       this.$store.commit("logout");
+      this.drawer = false
       if (this.$route.path !== "/") {
         this.$router.push("/");
       }

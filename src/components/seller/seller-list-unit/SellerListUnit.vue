@@ -11,18 +11,18 @@
         :loading="loading"
         loading-text="Carregando... Por favor aguarde"
       >
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-icon small class="mr-2" @click="editItem(item)">mdi-pencil</v-icon>
           <v-icon small @click="deleteItem(item)">mdi-delete</v-icon>
         </template>
 
         <template
-          v-slot:item.address="{item}"
+          v-slot:[`item.address`]="{item}"
         >{{item.address.streetAddress}} - {{item.address.zipCode}}, {{item.address.city}} - {{item.address.state}}</template>
 
-        <template v-slot:item.connectionType="{item}">{{connectionEnum[item.connectionType]}}</template>
+        <template v-slot:[`item.connectionType`]="{item}">{{connectionEnum[item.connectionType]}}</template>
 
-        <template v-slot:item.averageConsumption="{item}">{{item.averageConsumption}} KWh</template>
+        <template v-slot:[`item.averageConsumption`]="{item}">{{item.averageConsumption}} KWh</template>
       </v-data-table>
     </v-row>
   </v-container>
@@ -75,8 +75,9 @@ export default Vue.extend({
   methods: {
     populateList() {
       if (this.clientId) {
+        console.log(this.clientId)
         this.$http
-          .get(`/consumer-units?filter=clientId==${this.clientId}`)
+          .get(`/consumer-units?filter=clientId==${this.clientId.id}`)
           .then((result) => (this.listUnits = result.data.data))
           .catch((error) => console.log("error", error))
           .finally(() => (this.loading = false));
@@ -93,6 +94,7 @@ export default Vue.extend({
   },
   watch: {
     clientId(val) {
+      console.log(val)
       if (val) {
         this.populateList();
       }

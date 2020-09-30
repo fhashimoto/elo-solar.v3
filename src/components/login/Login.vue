@@ -58,8 +58,8 @@ export default Vue.extend({
         .then((response) => {
           this.$store.commit("setUser", response.data);
           this.$store.commit("setLogged", true);
+          this.$store.commit("timeLog", new Date())
           this.redirectType();
-          console.log(this.$store.state.user);
         })
         .catch((error) => {
           console.log("error", error);
@@ -71,7 +71,6 @@ export default Vue.extend({
     },
     redirectType() {
       const user = this.$store.state.user;
-      console.log("redirecionando - ", user);
       if (user.roles && user.roles.length) {
         switch (this.$store.state.user.roles[0]) {
           case "SELLER":
