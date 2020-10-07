@@ -17,9 +17,9 @@
       :unitData.sync="unitData"
       :dialog.sync="dialog"
     ></SellerListUnit>
-    <v-dialog v-model="dialog" max-width="75vw">
+    <v-dialog v-model="dialog" max-width="90vw">
       <v-card>
-        <ConsumerUnits :unitData.sync="unitData"></ConsumerUnits>
+        <ConsumerUnits :unitData.sync="unitData" :clientId="clientData.id"></ConsumerUnits>
       </v-card>
     </v-dialog>
   </v-container>
@@ -47,7 +47,10 @@ export default Vue.extend({
       .get(`/clients/${this.$route.params.id}`)
       .then((result) => (this.clientData = result.data))
       .catch((error) => console.log("error", error))
-      .finally(() => (this.loading = false));
+      .finally(() => {
+        console.log("beforeMount -> ", this.clientData);
+        this.loading = false;
+      });
   },
   watch: {
     unitData(val) {
@@ -56,9 +59,9 @@ export default Vue.extend({
   },
   computed: {
     clientDataComputed() {
-      return this.clientData
-    }
-  }
+      return this.clientData;
+    },
+  },
 });
 </script>
 

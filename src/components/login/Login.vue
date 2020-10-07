@@ -2,7 +2,9 @@
   <v-container grid-list-md>
     <v-card raised>
       <v-container grid-list-md>
-        <v-alert type="error" dismissible v-if="loginError">Usuário ou senha incorreta</v-alert>
+        <v-alert type="error" dismissible v-if="loginError"
+          >Usuário ou senha incorreta</v-alert
+        >
         <p class="title">Login</p>
         <v-form v-model="valid" @submit.prevent="tryLogin">
           <v-text-field
@@ -11,21 +13,32 @@
             autofocus
             required
             v-model="user"
-            :rules="[v => !!v || 'Informe um login']"
+            :rules="[(v) => !!v || 'Informe um login']"
           ></v-text-field>
           <v-text-field
             name="password"
             label="Senha"
             required
             v-model="password"
-            :rules="[v => !!v || 'Informe uma senha']"
+            :rules="[(v) => !!v || 'Informe uma senha']"
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
             :type="showPassword ? 'text' : 'password'"
             @click:append="showPassword = !showPassword"
           ></v-text-field>
-          <v-btn rounded color="primary" :disabled="!valid" type="submit" v-if="!loading">Entrar</v-btn>
+          <v-btn
+            rounded
+            color="primary"
+            :disabled="!valid"
+            type="submit"
+            v-if="!loading"
+            >Entrar</v-btn
+          >
         </v-form>
-        <v-progress-circular indeterminate color="primary" v-if="loading"></v-progress-circular>
+        <v-progress-circular
+          indeterminate
+          color="primary"
+          v-if="loading"
+        ></v-progress-circular>
       </v-container>
     </v-card>
   </v-container>
@@ -53,12 +66,13 @@ export default Vue.extend({
         password: this.password,
       });
       this.loading = true;
+      delete this.$http.defaults.headers.post["Authorization"];
       this.$http
-        .post("/login", raw)
+        .post("/login", raw, {})
         .then((response) => {
           this.$store.commit("setUser", response.data);
           this.$store.commit("setLogged", true);
-          this.$store.commit("timeLog", new Date())
+          this.$store.commit("timeLog", new Date());
           this.redirectType();
         })
         .catch((error) => {
@@ -67,6 +81,9 @@ export default Vue.extend({
         })
         .finally(() => {
           this.loading = false;
+          this.$http.defaults.headers.post[
+            "Authorization"
+          ] = `Bearer ${this.$store.state.user.token}`;
         });
     },
     redirectType() {
@@ -98,5 +115,4 @@ export default Vue.extend({
 });
 </script>
 
-<style>
-</style>
+<style></style>

@@ -3,14 +3,24 @@
     <v-container>
       <v-row>
         <v-col cols="12" md="4">
-          <v-text-field v-model="name" :rules="nameRules" label="Nome" required></v-text-field>
-        </v-col>
-        <v-col cols="12" md="4">
-          <v-text-field v-model="email" :rules="emailRules" label="E-mail"></v-text-field>
+          <v-text-field
+            v-model="clientForm.name"
+            :rules="nameRules"
+            label="Nome"
+            required
+            @keyup="updateClient()"
+          ></v-text-field>
         </v-col>
         <v-col cols="12" md="4">
           <v-text-field
-            v-model="phone"
+            v-model="clientForm.email"
+            :rules="emailRules"
+            label="E-mail"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" md="4">
+          <v-text-field
+            v-model="clientForm.phone"
             label="Telefone"
             v-mask="['(##) ####-####', '(##) #####-####']"
             masked="true"
@@ -23,21 +33,23 @@
 
 <script lang="ts">
 import Vue from "vue";
+import { mask } from "vue-the-mask";
 
 export default Vue.extend({
   data: () => ({
     valid: false,
-    name: "",
     nameRules: [(v: string) => !!v || "Nome é obrigatório"],
-    email: "",
     emailRules: [(v: string) => /.+@.+/.test(v) || "E-mail deve ser válido"],
-    phone: "",
-    id: "",
-    tags: [],
+    clientForm: {
+      name: "",
+      email: "",
+      phone: "",
+      id: "",
+      tags: [],
+    },
   }),
   props: ["clientData"],
   mounted() {
-    console.log(this.$props.clientData);
     this.writeData();
   },
   watch: {
@@ -47,17 +59,20 @@ export default Vue.extend({
   },
   methods: {
     writeData() {
-      console.log(this.$props.clientData)
       if (this.$props.clientData && this.$props.clientData.id) {
-        this.name = this.$props.clientData.name;
-        this.id = this.$props.clientData.id;
-        this.phone =
+        this.clientForm.name = this.$props.clientData.name;
+        this.clientForm.id = this.$props.clientData.id;
+        this.clientForm.phone =
           this.$props.clientData.phone.areaCode +
           this.$props.clientData.phone.phoneNumber;
-        this.tags = this.$props.clientData.tags;
-        this.email = this.$props.clientData.email;
+        this.clientForm.tags = this.$props.clientData.tags;
+        this.clientForm.email = this.$props.clientData.email;
       }
     },
+    updateClient() {
+      this.$emit("update:clientData", this.clientForm);
+    },
   },
+  directives: { mask },
 });
 </script>

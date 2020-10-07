@@ -31,7 +31,7 @@
 <script lang="ts">
 import Vue from "vue";
 import { ConsumerUnit } from "../../../interfaces/consumer-unit-interface";
-import { ConnectionType } from "../../../enums/connection-type-enum";
+import { ConnectionType } from "../../../enums/address-enum";
 export default Vue.extend({
   data: () => ({
     connectionEnum: ConnectionType,

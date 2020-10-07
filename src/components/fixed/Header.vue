@@ -9,7 +9,7 @@
       style="{z-index: 200}"
       v-show="drawer"
     >
-      <v-btn large text to="/projetos">
+      <v-btn large text @click="redirectHome()">
         <i class="fa fa-home mr-1" aria-hidden="true"></i>Home
       </v-btn>
       <v-btn large text @click="logout">
@@ -18,8 +18,17 @@
     </v-navigation-drawer>
 
     <v-app-bar app dark>
-      <v-app-bar-nav-icon absolute left @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-      <img class="logo" src="../../assets/elo-solar-logo.png" alt="logo elo solar" @click.stop="redirectHome()"/>
+      <v-app-bar-nav-icon
+        absolute
+        left
+        @click.stop="drawer = !drawer"
+      ></v-app-bar-nav-icon>
+      <img
+        class="logo"
+        src="../../assets/elo-solar-logo.png"
+        alt="logo elo solar"
+        @click.stop="redirectHome()"
+      />
       <!-- <v-img
         src="../../assets/elo-solar-logo.png"
         :max-height="isMobile ? 40 : 65"
@@ -38,7 +47,7 @@ export default Vue.extend({
   data() {
     return {
       isMobile: false,
-      drawer: false
+      drawer: false,
     };
   },
 
@@ -58,11 +67,12 @@ export default Vue.extend({
       this.isMobile = window.innerWidth < 960;
     },
     redirectHome() {
-      switch (this.$store.state.role) {
+      const role = this.$store.state.user.roles.find((el: string) => el);
+      switch (role) {
         case "SELLER":
           if (this.$route.path !== `/seller`) {
             this.$router.push("/seller");
-          }
+          }          
           break;
         case "ENGINEER":
           if (this.$route.path !== `/engineer`) {
@@ -72,15 +82,16 @@ export default Vue.extend({
         default:
           break;
       }
+      this.drawer = false
     },
     logout() {
       this.$store.commit("logout");
-      this.drawer = false
+      this.drawer = false;
       if (this.$route.path !== "/") {
         this.$router.push("/");
       }
-    }
-  }
+    },
+  },
 });
 </script>
 

@@ -3,7 +3,7 @@
     <v-row align="center">
       <v-text-field :label="'Pesquise...'" prepend-inner-icon="fa-search" v-model="search"></v-text-field>
       <v-btn color="primary" class="d-none d-md-flex ml-5">Adicione um novo cliente</v-btn>
-      <v-btn fixed bottom right class="mx-2 d-md-none" fab dark color="indigo">
+      <v-btn fixed bottom right class="mx-2 d-md-none" fab dark color="indigo" @click="newClient()">
         <v-icon dark>mdi-plus</v-icon>
       </v-btn>
     </v-row>
@@ -56,6 +56,9 @@ export default Vue.extend({
     deleteItem(item: Client) {
       console.log("Deletar - ", item);
     },
+    newClient() {
+      this.$router.push({name: "NewClient"})
+    }
   },
   beforeMount() {
     this.$http
