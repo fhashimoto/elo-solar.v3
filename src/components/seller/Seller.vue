@@ -9,7 +9,7 @@
         </v-card>
       </v-col>
       <v-col cols="12" md="4" sm="4">
-        <v-card hover class="menu-row__card" @click="goToList()">
+        <v-card hover class="menu-row__card" @click="goToPage('ListClient')">
           <i class="fas fa-users"></i>
           <v-toolbar-title>Lista de Clientes</v-toolbar-title>
         </v-card>
@@ -29,10 +29,10 @@ import Vue from "vue";
 
 export default Vue.extend({
   methods: {
-    goToList() {
-      this.$router.push({ name: "ListClient" });
-    }
-  }
+    goToPage(page: string) {
+      this.$router.push({ name: page });
+    },
+  },
 });
 </script>
 
