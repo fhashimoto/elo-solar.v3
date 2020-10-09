@@ -1,6 +1,6 @@
 export interface DateValue {
   year?: number,
   name?: string,
-  month?: number,
-  consumption?: number
+  month: number,
+  consumption: number
 }

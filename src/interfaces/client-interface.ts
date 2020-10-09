@@ -1,10 +1,11 @@
-export interface Client {
+export interface ClientInterface {
   email?: string,
   id?: string,
-  nome: string,
+  name: string,
   phone?: {
     areaCode?: string,
     phoneNumber?: string
   },
-  tags: Array<string>
+  tags?: Array<string>,
+  fullPhone?: string
 }

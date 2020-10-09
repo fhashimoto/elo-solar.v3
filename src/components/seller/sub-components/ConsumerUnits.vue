@@ -39,7 +39,7 @@
             placeholder="Tipo de Conexão"
             class="select-input"
             @change="
-              unit.energyBills.connectionType = updateValue(
+              unit.energyBills[0].connectionType = updateValue(
                 connectionEnum,
                 connectionShow
               )
@@ -64,7 +64,7 @@
             placeholder="Modalidade da Tarifa"
             class="select-input"
             @change="
-              unit.energyBills.tariffModality = updateValue(
+              unit.energyBills[0].tariffModality = updateValue(
                 tariffEnum,
                 tariffShow
               )
@@ -85,12 +85,9 @@
             type="number"
             label="Ano"
             @keyup="
-              setMonthArray(
-                unit.energyBills.referenceMonth.month,
-                $event.target.value
-              )
+              setMonthArray(unit.energyBills[0].month, $event.target.value)
             "
-            v-model="unit.energyBills.referenceMonth.year"
+            v-model="unit.energyBills[0].year"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="4">
@@ -100,12 +97,9 @@
             item-value="month"
             label="Mês"
             @change="
-              setMonthArray(
-                unit.energyBills.referenceMonth.month,
-                unit.energyBills.referenceMonth.year
-              )
+              setMonthArray(unit.energyBills[0].month, unit.energyBills[0].year)
             "
-            v-model="unit.energyBills.referenceMonth.month"
+            v-model="unit.energyBills[0].month"
           ></v-select>
           <!-- <v-text-field label="Mês"></v-text-field> -->
         </v-col>
@@ -115,12 +109,12 @@
           <v-text-field
             label="Consumo de Energia"
             suffix="KWh"
-            v-model="unit.energyBills.energyConsumption"
+            v-model="unit.energyBills[0].energyConsumption"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="4">
           <v-text-field
-            v-model.lazy="unit.energyBills.energyPrice"
+            v-model="unit.energyBills[0].energyPrice"
             label="Preço de Energia"
             v-money="money"
             suffix="R$"
@@ -128,7 +122,7 @@
         </v-col>
         <v-col cols="12" md="4">
           <v-text-field
-            v-model.lazy="unit.energyBills.totalDue"
+            v-model="unit.energyBills[0].totalDue"
             label="Total da Fatura"
             v-money="money"
             suffix="R$"
@@ -146,8 +140,13 @@
         </v-col>
       </v-row>
       <div class="my-10 d-flex justify-center">
-        <v-btn color="green lighten-2" @click="handleSave()">
-          Salvar <i class="fa fa-check" aria-hidden="true"></i>
+        <v-btn color="green lighten-2" @click="handleSave()" :disabled="saving">
+          <div v-if="saving">
+            <i class="fas fa-spinner fa-spin"></i>
+          </div>
+          <div v-else>
+            Salvar <i class="fa fa-check" aria-hidden="true"></i>
+          </div>
         </v-btn>
       </div>
     </v-container>
@@ -180,18 +179,21 @@ export default Vue.extend({
       },
       unitNumber: "",
       electricUtility: "",
-      energyBills: {
-        referenceMonth: {
+      energyBills: [
+        {
           year: new Date().getFullYear(),
           month: new Date().getMonth(),
+          totalDue: 0.0,
+          energyPrice: 0.0,
+          connectionType: "",
+          tariffModality: "",
+          energyConsumption: 0,
+          consumptionHistory: [] as Array<{
+            month: number;
+            consumption: number;
+          }>,
         },
-        totalDue: 0.0,
-        energyPrice: 0.0,
-        connectionType: "",
-        tariffModality: "",
-        energyConsumption: 0,
-        consumptionHistory: [] as Array<{ month: number; consumption: number }>,
-      },
+      ],
     },
     connectionType: "",
     tariffModality: "",
@@ -224,9 +226,10 @@ export default Vue.extend({
     connectionEnum: ConnectionType,
     tariffEnum: TariffModality,
     electricEnum: ElectricUtility,
+    saving: false as boolean,
   }),
   computed: {
-    zipCode() {
+    zipCode(): string {
       return this.unit.address.zipCode;
     },
   },
@@ -250,30 +253,6 @@ export default Vue.extend({
         }
       }
     },
-    // year(val) {
-    //   this.monthArray = this.setMonthArray(this.selectMonth, val);
-    // },
-    // selectMonth(val) {
-    //   this.monthArray = this.setMonthArray(val, this.year);
-    // },
-    // connectionShow() {
-    //   this.unit.energyBills.connectionType = this.changeEnum(
-    //     ConnectionType,
-    //     this.connectionShow
-    //   );
-    // },
-    // tariffShow() {
-    //   this.unit.energyBills.tariffModality = this.changeEnum(
-    //     TariffModality,
-    //     this.tariffShow
-    //   );
-    // },
-    // utilityShow() {
-    //   this.unit.electricUtility = this.changeEnum(
-    //     ElectricUtility,
-    //     this.utilityShow
-    //   );
-    // },
   },
   methods: {
     setMonthArray(mothValue: number, yearValue: number) {
@@ -323,49 +302,82 @@ export default Vue.extend({
 
       const unitCopy = JSON.parse(JSON.stringify(this.unit));
 
-      unitCopy.energyBills.consumptionHistory = this.monthArray;
+      unitCopy.energyBills[0].consumptionHistory = this.monthArray;
 
       unitCopy.clientId = this.$props.clientId;
 
-      unitCopy.energyBills.totalDue = unitCopy.energyBills.totalDue
-        ? stringToFloat(unitCopy.energyBills.totalDue)
+      unitCopy.energyBills[0].totalDue = unitCopy.energyBills[0].totalDue
+        ? stringToFloat(unitCopy.energyBills[0].totalDue)
         : 0;
-      unitCopy.energyBills.energyPrice = unitCopy.energyBills.energyPrice
-        ? stringToFloat(unitCopy.energyBills.energyPrice)
+      unitCopy.energyBills[0].energyPrice = unitCopy.energyBills[0].energyPrice
+        ? stringToFloat(unitCopy.energyBills[0].energyPrice)
         : 0;
-      unitCopy.energyBills.energyConsumption = unitCopy.energyBills
+      unitCopy.energyBills[0].energyConsumption = unitCopy.energyBills[0]
         .energyConsumption
-        ? stringToFloat(unitCopy.energyBills.energyConsumption)
+        ? stringToFloat(unitCopy.energyBills[0].energyConsumption)
         : 0;
 
-      unitCopy.energyBills.consumptionHistory.forEach(
-        (el: DateValue) =>
-          (el.consumption = el.consumption ? +el.consumption : 0)
+      unitCopy.energyBills[0].consumptionHistory = unitCopy.energyBills[0].consumptionHistory.map(
+        (el: DateValue) => ({
+          month: el.month + 1,
+          consumption: +el.consumption,
+        })
       );
 
-      const historyObj = {} as { [key: string]: number };
-
-      unitCopy.energyBills.consumptionHistory.forEach((el: DateValue) => {
-        if (
-          (el.month || el.month == 0) &&
-          MonthInterface[el.month] &&
-          (el.consumption || el.consumption == 0)
-        ) {
-          historyObj[MonthInterface[el.month]] = el.consumption;
-        }
-      });
-
-      unitCopy.energyBills.consumptionHistory = historyObj;
-
-      unitCopy.energyBills.referenceMonth.month =
-        MonthInterface[unitCopy.energyBills.referenceMonth.month];
+      unitCopy.energyBills[0].month += 1;
+      //   MonthInterface[unitCopy.energyBills[0].month];
 
       console.log("enum -> ", MonthInterface);
       console.log("unit -> ", unitCopy);
-
+      this.saving = true;
       this.$http
         .post("/consumer-units", unitCopy)
-        .then((resp) => console.log(resp));
+        .then((resp) => {
+          console.log(resp);
+          this.$swal({
+            title: "Unidade cadastrada com sucesso",
+            icon: "success",
+          }).then((resp) => {
+            if (resp.isConfirmed) {
+              this.$emit("update:dialog", false);
+              this.clearData();
+            }
+          });
+        })
+        .catch((err) => {
+          this.$swal({
+            title: err.response.data.message,
+            icon: "error",
+          });
+        })
+        .finally(() => (this.saving = false));
+    },
+    clearData() {
+      this.unit = {
+        address: {
+          city: "",
+          state: "",
+          streetAddress: "",
+          zipCode: "",
+        },
+        unitNumber: "",
+        electricUtility: "",
+        energyBills: [
+          {
+            year: new Date().getFullYear(),
+            month: new Date().getMonth(),
+            totalDue: 0.0,
+            energyPrice: 0.0,
+            connectionType: "",
+            tariffModality: "",
+            energyConsumption: 0,
+            consumptionHistory: [] as Array<{
+              month: number;
+              consumption: number;
+            }>,
+          },
+        ],
+      };
     },
   },
   mounted() {
@@ -412,7 +424,7 @@ export default Vue.extend({
     money: VMoney,
     mask,
   },
-  props: ["unitData", "clientId"],
+  props: ["unitData", "clientId", "dialog"],
 });
 </script>
 

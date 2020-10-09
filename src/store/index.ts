@@ -10,7 +10,8 @@ export default new Vuex.Store({
   state: {
     user: {} as User,
     logged: false,
-    timeLogged: new Date()
+    timeLogged: new Date(),
+    loading: false
   },
   mutations: {
     setUser(state, data) {

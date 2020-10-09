@@ -1,3 +1,5 @@
+import { TariffModality } from '@/enums/address-enum';
+
 export interface ConsumerUnit {
   id?: string,
   address?: {
