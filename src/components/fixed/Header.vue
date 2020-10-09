@@ -67,22 +67,29 @@ export default Vue.extend({
       this.isMobile = window.innerWidth < 960;
     },
     redirectHome() {
-      const role = this.$store.state.user.roles.find((el: string) => el);
+      const role = this.$store.state.user.roles
+        ? this.$store.state.user.roles.find((el: string) => el)
+        : "";
       switch (role) {
         case "SELLER":
           if (this.$route.path !== `/seller`) {
             this.$router.push("/seller");
-          }          
+          }
           break;
         case "ENGINEER":
           if (this.$route.path !== `/engineer`) {
             this.$router.push("/engineer");
           }
           break;
+        case "ADMINISTRATOR":
+          if (this.$route.path !== "/administrator") {
+            this.$router.push("/administrator");
+          }
+          break;
         default:
           break;
       }
-      this.drawer = false
+      this.drawer = false;
     },
     logout() {
       this.$store.commit("logout");

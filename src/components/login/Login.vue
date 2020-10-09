@@ -100,6 +100,11 @@ export default Vue.extend({
               this.$router.push("/engineer");
             }
             break;
+          case "ADMINISTRATOR":
+            if (this.$route.path !== "/administrator") {
+              this.$router.push("/administrator");
+            }
+            break;
           default:
             break;
         }
