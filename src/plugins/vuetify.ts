@@ -14,7 +14,7 @@ import "sweetalert2/dist/sweetalert2.min.css";
 // axios.defaults.baseURL = 'https://cors-anywhere.herokuapp.com/https://elosolar.herokuapp.com/v1'
 axios.defaults.baseURL =
   "https://cors-anywhere.herokuapp.com/" +
-  "https://e333bf4242a4.ngrok.io" +
+  "https://8156750efd92.ngrok.io" +
   "/v1";
 axios.defaults.headers.get[
   "Authorization"

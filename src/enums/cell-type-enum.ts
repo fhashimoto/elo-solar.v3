@@ -1,0 +1,4 @@
+export enum CellTypeEnum {
+  MONOCRYSTALLINE,
+  POLYCRYSTALLINE
+}
