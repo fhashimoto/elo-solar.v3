@@ -6,7 +6,7 @@
         prepend-inner-icon="fa-search"
         v-model="search"
       ></v-text-field>
-      <v-btn color="primary" class="d-none d-md-flex ml-5"
+      <v-btn color="primary" class="d-none d-md-flex ml-5" @click="newClient()"
         >Adicione um novo cliente</v-btn
       >
       <v-btn
@@ -70,7 +70,6 @@ export default Vue.extend({
     },
     deleteItem(item: ClientInterface) {
       console.log("Deletar - ", item);
-
     },
     newClient() {
       this.$router.push({ name: "NewClient" });
